@@ -21,73 +21,17 @@
   style="background: linear-gradient(132.77deg, #5C32C1 4.31%, #500971 93.03%);"
 >
   <div class="flex flex-col md:flex-row items-center md:items-start gap-12 max-w-screen-2xl mx-auto">
-    {%- comment -%} Desktop product image + thumbnails {%- endcomment -%}
-    <div class="product-new-design__desktop-image md:w-1/2">
-      <figure class="flex items-center justify-center w-full aspect-square">
-        {%- if product_image != blank -%}
-          <img
-            class="js-product-image w-full h-full object-contain"
-            src="{{ product_image | image_url: width: 800 }}"
-            width="{{ product_image.width }}"
-            height="{{ product_image.height }}"
-            alt="{{ product_image.alt | escape | default: product.title }}"
-          >
-        {%- else -%}
-          <div class="flex items-center justify-center w-full aspect-square bg-white/10 rounded-2xl">
-            <span class="text-base text-white/40">No image</span>
-          </div>
-        {%- endif -%}
-      </figure>
-
-      {%- comment -%} Extra variant images per color group {%- endcomment -%}
-      {%- for color in unique_colors -%}
-        {%- liquid
-          assign color_images = product.images | where: 'alt', color
-          assign group_hidden_class = 'hidden'
-          if color == selected_variant.option2
-            assign group_hidden_class = ''
-          endif
-        -%}
-        {%- if color_images.size > 0 -%}
-          <div
-            class="js-variant-images-group flex justify-center gap-6 mt-6 {{ group_hidden_class }}"
-            data-variant-images-group="{{ color | escape }}"
-          >
-            {%- for image in color_images limit: 2 -%}
-              <figure class="w-full max-w-48 aspect-square overflow-hidden rounded-xl">
-                <img
-                  class="w-full h-full object-contain"
-                  src="{{ image | image_url: width: 400 }}"
-                  width="{{ image.width }}"
-                  height="{{ image.height }}"
-                  alt="{{ image.alt | escape }}"
-                >
-              </figure>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-
-    {%- comment -%} Product Info {%- endcomment -%}
-    <div class="w-full max-w-2xl text-white">
-      <h2 class="mb-3 text-4xl md:text-5xl font-bold uppercase text-white">
-        {{ product.title }}
-      </h2>
-
-      <p class="js-product-price mb-8 text-3xl font-semibold">
-        {{ selected_variant.price | money }}
-      </p>
-
-      {%- comment -%} Mobile-only swiper {%- endcomment -%}
-      <div class="md:hidden mb-8">
-        <div class="js-product-swiper swiper w-full">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
+    {%- comment -%} Media column {%- endcomment -%}
+    <div class="w-full md:w-1/2">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'media' -%}
+          <div {{ block.shopify_attributes }}>
+            {%- comment -%} Desktop product image + thumbnails {%- endcomment -%}
+            <div class="product-new-design__desktop-image">
               <figure class="flex items-center justify-center w-full aspect-square">
                 {%- if product_image != blank -%}
                   <img
-                    class="js-swiper-product-image w-full h-full object-contain"
+                    class="js-product-image w-full h-full object-contain"
                     src="{{ product_image | image_url: width: 800 }}"
                     width="{{ product_image.width }}"
                     height="{{ product_image.height }}"
@@ -99,125 +43,207 @@
                   </div>
                 {%- endif -%}
               </figure>
-            </div>
-            {%- for image in initial_variant_images limit: 2 -%}
-              <div class="swiper-slide">
-                <figure class="flex items-center justify-center w-full aspect-square">
-                  <img
-                    class="w-full h-full object-contain"
-                    src="{{ image | image_url: width: 800 }}"
-                    width="{{ image.width }}"
-                    height="{{ image.height }}"
-                    alt="{{ image.alt | escape }}"
+
+              {%- comment -%} Extra variant images per color group {%- endcomment -%}
+              {%- for color in unique_colors -%}
+                {%- liquid
+                  assign color_images = product.images | where: 'alt', color
+                  assign group_hidden_class = 'hidden'
+                  if color == selected_variant.option2
+                    assign group_hidden_class = ''
+                  endif
+                -%}
+                {%- if color_images.size > 0 -%}
+                  <div
+                    class="js-variant-images-group flex justify-center gap-6 mt-6 {{ group_hidden_class }}"
+                    data-variant-images-group="{{ color | escape }}"
                   >
-                </figure>
-              </div>
-            {%- endfor -%}
-          </div>
-        </div>
-
-        {%- comment -%} Templates of variant slides for runtime swap {%- endcomment -%}
-        {%- for color in unique_colors -%}
-          {%- if color == blank -%}
-            {%- continue -%}
-          {%- endif -%}
-          {%- assign color_images = product.images | where: 'alt', color -%}
-          {%- if color_images.size > 0 -%}
-            <template class="js-swiper-variant-template" data-variant-color="{{ color | escape }}">
-              {%- for image in color_images limit: 2 -%}
-                <div class="swiper-slide">
-                  <figure class="flex items-center justify-center w-full aspect-square">
-                    <img
-                      class="w-full h-full object-contain"
-                      src="{{ image | image_url: width: 800 }}"
-                      width="{{ image.width }}"
-                      height="{{ image.height }}"
-                      alt="{{ image.alt | escape }}"
-                    >
-                  </figure>
-                </div>
+                    {%- for image in color_images limit: 2 -%}
+                      <figure class="w-full max-w-48 aspect-square overflow-hidden rounded-xl">
+                        <img
+                          class="w-full h-full object-contain"
+                          src="{{ image | image_url: width: 400 }}"
+                          width="{{ image.width }}"
+                          height="{{ image.height }}"
+                          alt="{{ image.alt | escape }}"
+                        >
+                      </figure>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
               {%- endfor -%}
-            </template>
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-
-      {%- comment -%} Color swatches {%- endcomment -%}
-      {%- if unique_colors.size > 1 -%}
-        <p class="mb-4 text-lg text-white/80">
-          Color: <span class="js-selected-color font-medium">{{ selected_variant.option2 }}</span>
-        </p>
-        <div class="flex flex-wrap gap-4 mb-10">
-          {%- for color in unique_colors -%}
-            {%- liquid
-              assign swatch_variant = blank
-              for variant in product.variants
-                if variant.option2 == color
-                  assign swatch_variant = variant
-                  break
-                endif
-              endfor
-              assign swatch_border_class = 'border-white/20'
-              if color == selected_variant.option2
-                assign swatch_border_class = 'border-white'
-              endif
-            -%}
-            <div
-              class="js-variant-swatch w-full max-w-20 aspect-square overflow-hidden rounded-xl border-2 cursor-pointer {{ swatch_border_class }}"
-              data-variant-id="{{ swatch_variant.id }}"
-              data-variant-color="{{ color | escape }}"
-              data-variant-image="{{ swatch_variant.featured_image | image_url: width: 800 }}"
-              data-variant-price="{{ swatch_variant.price | money }}"
-              data-variant-available="{{ swatch_variant.available }}"
-            >
-              {%- if swatch_variant.featured_image -%}
-                <img
-                  class="w-full h-full object-cover"
-                  src="{{ swatch_variant.featured_image | image_url: width: 200 }}"
-                  width="{{ swatch_variant.featured_image.width }}"
-                  height="{{ swatch_variant.featured_image.height }}"
-                  alt="{{ swatch_variant.title | escape }}"
-                >
-              {%- else -%}
-                <div class="w-full h-full bg-white/10"></div>
-              {%- endif -%}
             </div>
-          {%- endfor -%}
-        </div>
-      {%- else -%}
-        <div class="mb-10"></div>
-      {%- endif -%}
 
-      {%- form 'product', product, class: 'js-product-form' -%}
-        <input
-          class="js-product-form-variant-id"
-          type="hidden"
-          name="id"
-          value="{{ selected_variant.id }}"
-        >
-        <button
-          class="js-product-form-submit w-full py-5 mb-6 font-semibold text-lg text-white bg-black rounded-full"
-          type="submit"
-          name="add"
-          {% unless selected_variant.available %}
-            disabled
-          {% endunless %}
-        >
-          <span class="js-product-form-submit-text">
-            {%- if selected_variant.available -%}
-              Add to Cart
-            {%- else -%}
-              Sold Out
+            {%- comment -%} Mobile-only swiper {%- endcomment -%}
+            <div class="md:hidden">
+              <div class="js-product-swiper swiper w-full">
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <figure class="flex items-center justify-center w-full aspect-square">
+                      {%- if product_image != blank -%}
+                        <img
+                          class="js-swiper-product-image w-full h-full object-contain"
+                          src="{{ product_image | image_url: width: 800 }}"
+                          width="{{ product_image.width }}"
+                          height="{{ product_image.height }}"
+                          alt="{{ product_image.alt | escape | default: product.title }}"
+                        >
+                      {%- else -%}
+                        <div class="flex items-center justify-center w-full aspect-square bg-white/10 rounded-2xl">
+                          <span class="text-base text-white/40">No image</span>
+                        </div>
+                      {%- endif -%}
+                    </figure>
+                  </div>
+                  {%- for image in initial_variant_images limit: 2 -%}
+                    <div class="swiper-slide">
+                      <figure class="flex items-center justify-center w-full aspect-square">
+                        <img
+                          class="w-full h-full object-contain"
+                          src="{{ image | image_url: width: 800 }}"
+                          width="{{ image.width }}"
+                          height="{{ image.height }}"
+                          alt="{{ image.alt | escape }}"
+                        >
+                      </figure>
+                    </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+
+              {%- comment -%} Templates of variant slides for runtime swap {%- endcomment -%}
+              {%- for color in unique_colors -%}
+                {%- if color == blank -%}
+                  {%- continue -%}
+                {%- endif -%}
+                {%- assign color_images = product.images | where: 'alt', color -%}
+                {%- if color_images.size > 0 -%}
+                  <template class="js-swiper-variant-template" data-variant-color="{{ color | escape }}">
+                    {%- for image in color_images limit: 2 -%}
+                      <div class="swiper-slide">
+                        <figure class="flex items-center justify-center w-full aspect-square">
+                          <img
+                            class="w-full h-full object-contain"
+                            src="{{ image | image_url: width: 800 }}"
+                            width="{{ image.width }}"
+                            height="{{ image.height }}"
+                            alt="{{ image.alt | escape }}"
+                          >
+                        </figure>
+                      </div>
+                    {%- endfor -%}
+                  </template>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Info column {%- endcomment -%}
+    <div class="w-full max-w-2xl text-white">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'title' -%}
+            <h2
+              class="mb-3 text-4xl md:text-5xl font-bold uppercase text-white"
+              {{ block.shopify_attributes }}
+            >
+              {{ product.title }}
+            </h2>
+
+          {%- when 'price' -%}
+            <p
+              class="js-product-price mb-8 text-3xl font-semibold"
+              {{ block.shopify_attributes }}
+            >
+              {{ selected_variant.price | money }}
+            </p>
+
+          {%- when 'swatches' -%}
+            {%- if unique_colors.size > 1 -%}
+              <div {{ block.shopify_attributes }}>
+                <p class="mb-4 text-lg text-white/80">
+                  {{ block.settings.label }}
+                  <span class="js-selected-color font-medium">{{ selected_variant.option2 }}</span>
+                </p>
+                <div class="flex flex-wrap gap-4 mb-10">
+                  {%- for color in unique_colors -%}
+                    {%- liquid
+                      assign swatch_variant = blank
+                      for variant in product.variants
+                        if variant.option2 == color
+                          assign swatch_variant = variant
+                          break
+                        endif
+                      endfor
+                      assign swatch_border_class = 'border-white/20'
+                      if color == selected_variant.option2
+                        assign swatch_border_class = 'border-white'
+                      endif
+                    -%}
+                    <div
+                      class="js-variant-swatch w-full max-w-20 aspect-square overflow-hidden rounded-xl border-2 cursor-pointer {{ swatch_border_class }}"
+                      data-variant-id="{{ swatch_variant.id }}"
+                      data-variant-color="{{ color | escape }}"
+                      data-variant-image="{{ swatch_variant.featured_image | image_url: width: 800 }}"
+                      data-variant-price="{{ swatch_variant.price | money }}"
+                      data-variant-available="{{ swatch_variant.available }}"
+                    >
+                      {%- if swatch_variant.featured_image -%}
+                        <img
+                          class="w-full h-full object-cover"
+                          src="{{ swatch_variant.featured_image | image_url: width: 200 }}"
+                          width="{{ swatch_variant.featured_image.width }}"
+                          height="{{ swatch_variant.featured_image.height }}"
+                          alt="{{ swatch_variant.title | escape }}"
+                        >
+                      {%- else -%}
+                        <div class="w-full h-full bg-white/10"></div>
+                      {%- endif -%}
+                    </div>
+                  {%- endfor -%}
+                </div>
+              </div>
             {%- endif -%}
-          </span>
-        </button>
-      {%- endform -%}
 
-      {%- if product.description != blank -%}
-        <div class="text-lg text-white/75">
-          {{ product.description }}
-        </div>
-      {%- endif -%}
+          {%- when 'buy_button' -%}
+            <div {{ block.shopify_attributes }}>
+              {%- form 'product', product, class: 'js-product-form' -%}
+                <input
+                  class="js-product-form-variant-id"
+                  type="hidden"
+                  name="id"
+                  value="{{ selected_variant.id }}"
+                >
+                <button
+                  class="js-product-form-submit w-full py-5 mb-6 font-semibold text-lg text-white bg-black rounded-full"
+                  type="submit"
+                  name="add"
+                  {% unless selected_variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  <span class="js-product-form-submit-text">
+                    {%- if selected_variant.available -%}
+                      {{ block.settings.button_text }}
+                    {%- else -%}
+                      {{ block.settings.sold_out_text }}
+                    {%- endif -%}
+                  </span>
+                </button>
+              {%- endform -%}
+            </div>
+
+          {%- when 'description' -%}
+            {%- if product.description != blank -%}
+              <div class="text-lg text-white/75" {{ block.shopify_attributes }}>
+                {{ product.description }}
+              </div>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
     </div>
   </div>
 </section>
@@ -229,6 +255,73 @@
 {
   "name": "Product New Design",
   "tag": "section",
-  "settings": []
+  "settings": [],
+  "blocks": [
+    {
+      "type": "media",
+      "name": "Media",
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "swatches",
+      "name": "Color swatches",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Color:"
+        }
+      ]
+    },
+    {
+      "type": "buy_button",
+      "name": "Buy button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Add to Cart"
+        },
+        {
+          "type": "text",
+          "id": "sold_out_text",
+          "label": "Sold out text",
+          "default": "Sold Out"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product New Design",
+      "blocks": [
+        { "type": "media" },
+        { "type": "title" },
+        { "type": "price" },
+        { "type": "swatches" },
+        { "type": "buy_button" },
+        { "type": "description" }
+      ]
+    }
+  ]
 }
 {% endschema %}
