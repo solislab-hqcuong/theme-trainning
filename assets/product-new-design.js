@@ -18,6 +18,13 @@ const updateVariantId = (variantIdEl, variantId) => {
   if (variantIdEl) variantIdEl.value = variantId
 }
 
+const updateUrlVariant = (variantId) => {
+  if (!variantId) return
+  const url = new URL(window.location.href)
+  url.searchParams.set('variant', variantId)
+  window.history.replaceState({}, '', url)
+}
+
 const updateSubmitState = (submitEl, submitTextEl, isAvailable) => {
   if (!submitEl) return
   submitEl.disabled = !isAvailable
@@ -59,6 +66,10 @@ const swatches = Array.prototype.slice.call(document.querySelectorAll('.js-varia
 const variantImageGroups = Array.prototype.slice.call(document.querySelectorAll('.js-variant-images-group'))
 
 if (swatches.length) {
+  if (variantIdEl && variantIdEl.value) {
+    updateUrlVariant(variantIdEl.value)
+  }
+
   swatches.map((swatchEl) => {
     swatchEl.addEventListener('click', () => {
       const { variantId, variantImage, variantPrice, variantColor, variantAvailable } = swatchEl.dataset
@@ -68,6 +79,7 @@ if (swatches.length) {
       updateProductPrice(productPriceEl, variantPrice)
       updateSelectedColor(selectedColorEl, variantColor)
       updateVariantId(variantIdEl, variantId)
+      updateUrlVariant(variantId)
       updateSubmitState(submitEl, submitTextEl, isAvailable)
       deactivateAllSwatches(swatches)
       activateSwatch(swatchEl)
